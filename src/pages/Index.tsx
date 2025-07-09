@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { LeadCaptureForm } from "@/components/LeadCaptureForm";
 import { LeadDashboard } from "@/components/LeadDashboard";
+import { CustomerDashboard } from "@/components/CustomerDashboard";
 import { QRCodeManagement } from "@/components/QRCodeManagement";
 import { CommunicationCenter } from "@/components/CommunicationCenter";
 import { Button } from "@/components/ui/button";
-import { BarChart3, QrCode, MessageSquare, Database } from "lucide-react";
+import { BarChart3, QrCode, MessageSquare, Database, Users } from "lucide-react";
 import { useSupabaseLeads } from "@/hooks/useSupabaseLeads";
 import { useToast } from "@/hooks/use-toast";
 import { Lead, LeadStatus } from "@/types/lead";
@@ -12,7 +13,7 @@ import { Lead, LeadStatus } from "@/types/lead";
 const Index = () => {
   const { leads, addLead, updateLeadStatus, migrateLocalStorageData, loading } = useSupabaseLeads();
   const { toast } = useToast();
-  const [currentView, setCurrentView] = useState<"form" | "dashboard" | "qr" | "communication">("form");
+  const [currentView, setCurrentView] = useState<"form" | "dashboard" | "customers" | "qr" | "communication">("form");
   const [migrationComplete, setMigrationComplete] = useState(false);
 
   // Check for localStorage data and migrate on component mount
@@ -54,6 +55,10 @@ const Index = () => {
     setCurrentView("dashboard");
   };
 
+  const showCustomers = () => {
+    setCurrentView("customers");
+  };
+
   const showQR = () => {
     setCurrentView("qr");
   };
@@ -68,6 +73,10 @@ const Index = () => {
 
   if (currentView === "dashboard") {
     return <LeadDashboard leads={leads} onBack={showForm} onUpdateLeadStatus={updateLeadStatus} />;
+  }
+
+  if (currentView === "customers") {
+    return <CustomerDashboard onBack={showForm} />;
   }
 
   if (currentView === "qr") {
@@ -102,6 +111,16 @@ const Index = () => {
         >
           <QrCode className="w-5 h-5" />
           QR Codes
+        </Button>
+        
+        <Button
+          variant="outline"
+          size="lg"
+          onClick={showCustomers}
+          className="gap-2 shadow-glow bg-background border-border hover:bg-accent"
+        >
+          <Users className="w-5 h-5" />
+          Customers
         </Button>
         
         <Button
