@@ -5,7 +5,7 @@ export interface EmailTemplate {
   name: string;
   subject: string;
   content: string;
-  type: "welcome" | "follow-up" | "re-engagement" | "post-class";
+  type: "welcome" | "follow-up" | "re-engagement" | "post-class" | "intro-package";
   segment?: CustomerSegment;
   delayHours?: number;
 }
