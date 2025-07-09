@@ -52,6 +52,81 @@ export type Database = {
           },
         ]
       }
+      classes: {
+        Row: {
+          created_at: string
+          description: string | null
+          end_time: string
+          id: string
+          instructor_id: string | null
+          is_substitute_class: boolean
+          max_capacity: number
+          name: string
+          notes: string | null
+          room: string | null
+          scheduled_date: string
+          start_time: string
+          status: Database["public"]["Enums"]["class_status"]
+          student_count: number
+          substitute_instructor_id: string | null
+          substitute_notice_hours: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          end_time: string
+          id?: string
+          instructor_id?: string | null
+          is_substitute_class?: boolean
+          max_capacity?: number
+          name: string
+          notes?: string | null
+          room?: string | null
+          scheduled_date: string
+          start_time: string
+          status?: Database["public"]["Enums"]["class_status"]
+          student_count?: number
+          substitute_instructor_id?: string | null
+          substitute_notice_hours?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          end_time?: string
+          id?: string
+          instructor_id?: string | null
+          is_substitute_class?: boolean
+          max_capacity?: number
+          name?: string
+          notes?: string | null
+          room?: string | null
+          scheduled_date?: string
+          start_time?: string
+          status?: Database["public"]["Enums"]["class_status"]
+          student_count?: number
+          substitute_instructor_id?: string | null
+          substitute_notice_hours?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "classes_instructor_id_fkey"
+            columns: ["instructor_id"]
+            isOneToOne: false
+            referencedRelation: "instructors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "classes_substitute_instructor_id_fkey"
+            columns: ["substitute_instructor_id"]
+            isOneToOne: false
+            referencedRelation: "instructors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       client_import: {
         Row: {
           Address: string | null
@@ -998,6 +1073,110 @@ export type Database = {
         }
         Relationships: []
       }
+      instructor_availability: {
+        Row: {
+          created_at: string
+          day_of_week: number
+          end_time: string
+          id: string
+          instructor_id: string
+          is_available: boolean
+          notes: string | null
+          start_time: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          day_of_week: number
+          end_time: string
+          id?: string
+          instructor_id: string
+          is_available?: boolean
+          notes?: string | null
+          start_time: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          day_of_week?: number
+          end_time?: string
+          id?: string
+          instructor_id?: string
+          is_available?: boolean
+          notes?: string | null
+          start_time?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "instructor_availability_instructor_id_fkey"
+            columns: ["instructor_id"]
+            isOneToOne: false
+            referencedRelation: "instructors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      instructors: {
+        Row: {
+          availability_notes: string | null
+          base_rate: number
+          bio: string | null
+          certification_level: Database["public"]["Enums"]["certification_level"]
+          created_at: string
+          email: string
+          emergency_contact_name: string | null
+          emergency_contact_phone: string | null
+          first_name: string
+          id: string
+          is_active: boolean
+          last_name: string
+          per_student_rate: number
+          phone: string | null
+          specialties: string[] | null
+          substitute_rate_multiplier: number
+          updated_at: string
+        }
+        Insert: {
+          availability_notes?: string | null
+          base_rate?: number
+          bio?: string | null
+          certification_level?: Database["public"]["Enums"]["certification_level"]
+          created_at?: string
+          email: string
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          first_name: string
+          id?: string
+          is_active?: boolean
+          last_name: string
+          per_student_rate?: number
+          phone?: string | null
+          specialties?: string[] | null
+          substitute_rate_multiplier?: number
+          updated_at?: string
+        }
+        Update: {
+          availability_notes?: string | null
+          base_rate?: number
+          bio?: string | null
+          certification_level?: Database["public"]["Enums"]["certification_level"]
+          created_at?: string
+          email?: string
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          first_name?: string
+          id?: string
+          is_active?: boolean
+          last_name?: string
+          per_student_rate?: number
+          phone?: string | null
+          specialties?: string[] | null
+          substitute_rate_multiplier?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           created_at: string
@@ -1080,6 +1259,69 @@ export type Database = {
             columns: ["founder_id"]
             isOneToOne: false
             referencedRelation: "founders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payroll_records: {
+        Row: {
+          base_payment: number
+          class_id: string
+          created_at: string
+          gusto_payment_id: string | null
+          id: string
+          instructor_id: string
+          is_substitute: boolean
+          payment_date: string | null
+          status: string
+          student_payment: number
+          substitute_multiplier: number | null
+          total_payment: number
+          updated_at: string
+        }
+        Insert: {
+          base_payment: number
+          class_id: string
+          created_at?: string
+          gusto_payment_id?: string | null
+          id?: string
+          instructor_id: string
+          is_substitute?: boolean
+          payment_date?: string | null
+          status?: string
+          student_payment?: number
+          substitute_multiplier?: number | null
+          total_payment: number
+          updated_at?: string
+        }
+        Update: {
+          base_payment?: number
+          class_id?: string
+          created_at?: string
+          gusto_payment_id?: string | null
+          id?: string
+          instructor_id?: string
+          is_substitute?: boolean
+          payment_date?: string | null
+          status?: string
+          student_payment?: number
+          substitute_multiplier?: number | null
+          total_payment?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payroll_records_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payroll_records_instructor_id_fkey"
+            columns: ["instructor_id"]
+            isOneToOne: false
+            referencedRelation: "instructors"
             referencedColumns: ["id"]
           },
         ]
@@ -1635,6 +1877,79 @@ export type Database = {
         }
         Relationships: []
       }
+      substitute_requests: {
+        Row: {
+          broadcast_sent_at: string | null
+          class_id: string
+          created_at: string
+          escalated_at: string | null
+          filled_at: string | null
+          filled_by_instructor_id: string | null
+          id: string
+          notice_hours: number
+          original_instructor_id: string
+          priority_level: number
+          request_reason: string | null
+          requested_by: string | null
+          status: Database["public"]["Enums"]["substitute_request_status"]
+          updated_at: string
+        }
+        Insert: {
+          broadcast_sent_at?: string | null
+          class_id: string
+          created_at?: string
+          escalated_at?: string | null
+          filled_at?: string | null
+          filled_by_instructor_id?: string | null
+          id?: string
+          notice_hours: number
+          original_instructor_id: string
+          priority_level?: number
+          request_reason?: string | null
+          requested_by?: string | null
+          status?: Database["public"]["Enums"]["substitute_request_status"]
+          updated_at?: string
+        }
+        Update: {
+          broadcast_sent_at?: string | null
+          class_id?: string
+          created_at?: string
+          escalated_at?: string | null
+          filled_at?: string | null
+          filled_by_instructor_id?: string | null
+          id?: string
+          notice_hours?: number
+          original_instructor_id?: string
+          priority_level?: number
+          request_reason?: string | null
+          requested_by?: string | null
+          status?: Database["public"]["Enums"]["substitute_request_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "substitute_requests_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "substitute_requests_filled_by_instructor_id_fkey"
+            columns: ["filled_by_instructor_id"]
+            isOneToOne: false
+            referencedRelation: "instructors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "substitute_requests_original_instructor_id_fkey"
+            columns: ["original_instructor_id"]
+            isOneToOne: false
+            referencedRelation: "instructors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       users: {
         Row: {
           auth_user_id: string | null
@@ -1736,6 +2051,37 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_instructor_payment: {
+        Args: {
+          p_instructor_id: string
+          p_class_id: string
+          p_student_count: number
+          p_is_substitute?: boolean
+          p_notice_hours?: number
+        }
+        Returns: {
+          base_payment: number
+          student_payment: number
+          total_payment: number
+          substitute_multiplier: number
+        }[]
+      }
+      find_available_substitutes: {
+        Args: {
+          p_class_date: string
+          p_start_time: string
+          p_end_time: string
+          p_original_instructor_id: string
+        }
+        Returns: {
+          instructor_id: string
+          first_name: string
+          last_name: string
+          email: string
+          phone: string
+          certification_level: Database["public"]["Enums"]["certification_level"]
+        }[]
+      }
       get_api_key: {
         Args: { service: string }
         Returns: string
@@ -1769,6 +2115,8 @@ export type Database = {
       }
     }
     Enums: {
+      certification_level: "200hr" | "500hr" | "advanced"
+      class_status: "scheduled" | "completed" | "cancelled" | "needs_substitute"
       communication_log_status: "Sent" | "Failed" | "Pending"
       communication_status: "sent" | "failed" | "pending"
       communication_type: "Email" | "SMS" | "InAppNotification"
@@ -1809,6 +2157,11 @@ export type Database = {
         | "Adjustment"
       lead_status: "new" | "contacted" | "in-progress" | "converted" | "lost"
       practical_log_status: "Pending Verification" | "Approved" | "Denied"
+      substitute_request_status:
+        | "pending"
+        | "filled"
+        | "escalated"
+        | "cancelled"
       survey_assignment_status:
         | "Assigned"
         | "In Progress"
@@ -1948,6 +2301,8 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      certification_level: ["200hr", "500hr", "advanced"],
+      class_status: ["scheduled", "completed", "cancelled", "needs_substitute"],
       communication_log_status: ["Sent", "Failed", "Pending"],
       communication_status: ["sent", "failed", "pending"],
       communication_type: ["Email", "SMS", "InAppNotification"],
@@ -1993,6 +2348,12 @@ export const Constants = {
       ],
       lead_status: ["new", "contacted", "in-progress", "converted", "lost"],
       practical_log_status: ["Pending Verification", "Approved", "Denied"],
+      substitute_request_status: [
+        "pending",
+        "filled",
+        "escalated",
+        "cancelled",
+      ],
       survey_assignment_status: [
         "Assigned",
         "In Progress",

@@ -5,8 +5,9 @@ import { CustomerDashboard } from "@/components/CustomerDashboard";
 import { ClientImport } from "@/components/ClientImport";
 import { QRCodeManagement } from "@/components/QRCodeManagement";
 import { CommunicationCenter } from "@/components/CommunicationCenter";
+import { ContractorManagement } from "@/components/ContractorManagement";
 import { Button } from "@/components/ui/button";
-import { BarChart3, QrCode, MessageSquare, Database, Users, Upload } from "lucide-react";
+import { BarChart3, QrCode, MessageSquare, Database, Users, Upload, UserCheck } from "lucide-react";
 import { useSupabaseLeads } from "@/hooks/useSupabaseLeads";
 import { useToast } from "@/hooks/use-toast";
 import { Lead, LeadStatus } from "@/types/lead";
@@ -14,7 +15,7 @@ import { Lead, LeadStatus } from "@/types/lead";
 const Index = () => {
   const { leads, addLead, updateLeadStatus, migrateLocalStorageData, loading } = useSupabaseLeads();
   const { toast } = useToast();
-  const [currentView, setCurrentView] = useState<"form" | "dashboard" | "customers" | "import" | "qr" | "communication">("form");
+  const [currentView, setCurrentView] = useState<"form" | "dashboard" | "customers" | "import" | "qr" | "communication" | "contractors">("form");
   const [migrationComplete, setMigrationComplete] = useState(false);
 
   // Check for localStorage data and migrate on component mount
@@ -72,6 +73,10 @@ const Index = () => {
     setCurrentView("communication");
   };
 
+  const showContractors = () => {
+    setCurrentView("contractors");
+  };
+
   const showForm = () => {
     setCurrentView("form");
   };
@@ -94,6 +99,10 @@ const Index = () => {
 
   if (currentView === "communication") {
     return <CommunicationCenter onBack={showForm} />;
+  }
+
+  if (currentView === "contractors") {
+    return <ContractorManagement />;
   }
 
   return (
@@ -130,6 +139,16 @@ const Index = () => {
         >
           <QrCode className="w-5 h-5" />
           QR Codes
+        </Button>
+        
+        <Button
+          variant="outline"
+          size="lg"
+          onClick={showContractors}
+          className="gap-2 shadow-glow bg-background border-border hover:bg-accent"
+        >
+          <UserCheck className="w-5 h-5" />
+          Contractors
         </Button>
         
         <Button
