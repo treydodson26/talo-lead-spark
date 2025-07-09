@@ -153,42 +153,25 @@ export function useSupabaseLeads() {
     }
   };
 
-  // Trigger welcome WhatsApp message automation (SREQ-001)
+  // Trigger welcome WhatsApp message automation (SREQ-001) and follow-up sequences (SREQ-002)
   const triggerWelcomeEmail = async (lead: Lead) => {
     try {
-      // Get appropriate welcome template based on segment
-      const { data: template, error: templateError } = await supabase
-        .from('email_templates')
-        .select('*')
-        .eq('type', 'welcome')
-        .or(`segment.eq.${lead.segment},segment.is.null`)
-        .eq('is_active', true)
-        .order('segment', { ascending: false })
-        .limit(1)
-        .single();
+      // Trigger the new lead follow-up sequence using the database function
+      const { error } = await supabase.rpc('trigger_communication_sequence', {
+        p_lead_id: lead.id,
+        p_trigger_type: 'new-lead',
+        p_segment: lead.segment || 'general'
+      });
 
-      if (templateError) {
-        console.error('No welcome template found:', templateError);
+      if (error) {
+        console.error('Error triggering communication sequence:', error);
         return;
       }
 
-      // Schedule the welcome WhatsApp message
-      const personalizedContent = template.content.replace(/\{\{name\}\}/g, lead.name);
-
-      await supabase
-        .from('communication_history')
-        .insert({
-          lead_id: lead.id,
-          type: 'SMS',
-          template_id: template.id,
-          subject: null, // WhatsApp doesn't need subjects
-          content: personalizedContent,
-          status: 'pending'
-        });
-
-      console.log('Welcome WhatsApp message queued for:', lead.phone);
+      console.log('Communication sequence triggered for:', lead.phone);
+      console.log('Sequence includes: Welcome (2h), Follow-up (3d), Final follow-up (7d)');
     } catch (err: any) {
-      console.error('Error triggering welcome WhatsApp message:', err);
+      console.error('Error triggering communication sequence:', err);
     }
   };
 

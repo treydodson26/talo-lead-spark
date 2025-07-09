@@ -1557,6 +1557,26 @@ export type Database = {
         Args: { service: string }
         Returns: string
       }
+      get_ready_messages: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          lead_id: string
+          template_id: string
+          sequence_id: string
+          content: string
+          lead_name: string
+          lead_phone: string
+        }[]
+      }
+      trigger_communication_sequence: {
+        Args: {
+          p_lead_id: string
+          p_trigger_type: Database["public"]["Enums"]["trigger_type"]
+          p_segment?: Database["public"]["Enums"]["customer_segment"]
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       communication_log_status: "Sent" | "Failed" | "Pending"

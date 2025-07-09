@@ -13,35 +13,27 @@ serve(async (req) => {
   }
 
   try {
-    console.log('Processing email queue...');
+    console.log('Processing WhatsApp queue...');
     
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    // Get pending WhatsApp messages that are ready to be sent
-    const { data: pendingMessages, error: fetchError } = await supabaseClient
-      .from('communication_history')
-      .select(`
-        *,
-        leads (name, phone)
-      `)
-      .eq('status', 'pending')
-      .eq('type', 'SMS')
-      .limit(10); // Process in batches
+    // Get pending WhatsApp messages that are ready to be sent (including scheduled ones)
+    const { data: readyMessages, error: fetchError } = await supabaseClient.rpc('get_ready_messages');
 
     if (fetchError) {
-      throw new Error(`Failed to fetch pending messages: ${fetchError.message}`);
+      throw new Error(`Failed to fetch ready messages: ${fetchError.message}`);
     }
 
-    console.log(`Found ${pendingMessages?.length || 0} pending WhatsApp messages`);
+    console.log(`Found ${readyMessages?.length || 0} ready WhatsApp messages`);
 
-    if (!pendingMessages || pendingMessages.length === 0) {
+    if (!readyMessages || readyMessages.length === 0) {
       return new Response(
         JSON.stringify({ 
           success: true, 
-          message: 'No pending WhatsApp messages to process',
+          message: 'No WhatsApp messages ready to send',
           processed: 0
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -51,8 +43,8 @@ serve(async (req) => {
     let processed = 0;
     let failed = 0;
 
-    // Process each WhatsApp message
-    for (const message of pendingMessages) {
+    // Process each ready WhatsApp message
+    for (const message of readyMessages) {
       try {
         // Call the send-whatsapp function
         const sendResponse = await supabaseClient.functions.invoke('send-whatsapp', {
@@ -60,8 +52,8 @@ serve(async (req) => {
             leadId: message.lead_id,
             templateId: message.template_id,
             content: message.content,
-            to: message.leads.phone,
-            name: message.leads.name,
+            to: message.lead_phone,
+            name: message.lead_name,
           },
         });
 
@@ -70,10 +62,10 @@ serve(async (req) => {
         }
 
         processed++;
-        console.log(`Successfully sent WhatsApp message to ${message.leads.phone}`);
+        console.log(`Successfully sent WhatsApp message to ${message.lead_phone}`);
 
       } catch (messageError: any) {
-        console.error(`Failed to send WhatsApp message to ${message.leads.phone}:`, messageError);
+        console.error(`Failed to send WhatsApp message to ${message.lead_phone}:`, messageError);
         
         // Mark as failed
         await supabaseClient
@@ -101,7 +93,7 @@ serve(async (req) => {
     );
 
   } catch (error: any) {
-    console.error('Error in process-email-queue function:', error);
+    console.error('Error in process-whatsapp-queue function:', error);
     
     return new Response(
       JSON.stringify({ 
