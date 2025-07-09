@@ -1671,6 +1671,13 @@ export type Database = {
           lead_phone: string
         }[]
       }
+      import_csv_to_emily_customers: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          imported_count: number
+          error_count: number
+        }[]
+      }
       trigger_communication_sequence: {
         Args: {
           p_lead_id: string

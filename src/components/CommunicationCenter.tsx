@@ -7,9 +7,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Plus, Mail, MessageSquare, Edit, Trash2, Clock } from "lucide-react";
+import { ArrowLeft, Plus, Mail, MessageSquare, Edit, Trash2, Clock, PlayCircle } from "lucide-react";
 import { EmailTemplate, CustomerSegment, CUSTOMER_SEGMENTS } from "@/types/communication";
 import { WhatsAppManager } from "@/components/WhatsAppManager";
+import { AutomationTester } from "@/components/AutomationTester";
 import { useToast } from "@/hooks/use-toast";
 
 interface CommunicationCenterProps {
@@ -145,9 +146,13 @@ export function CommunicationCenter({ onBack }: CommunicationCenterProps) {
         </div>
 
         <Tabs defaultValue="whatsapp" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="whatsapp">WhatsApp Automation</TabsTrigger>
             <TabsTrigger value="templates">Message Templates</TabsTrigger>
+            <TabsTrigger value="tester" className="flex items-center gap-2">
+              <PlayCircle className="w-4 h-4" />
+              Automation Tester
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="whatsapp">
@@ -338,6 +343,10 @@ export function CommunicationCenter({ onBack }: CommunicationCenterProps) {
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+
+          <TabsContent value="tester">
+            <AutomationTester />
           </TabsContent>
         </Tabs>
       </div>
