@@ -24,7 +24,7 @@ const Index = () => {
         if (result.migrated > 0) {
           toast({
             title: "Data Migrated Successfully",
-            description: `${result.migrated} leads have been migrated to the database with automated email sequences enabled.`,
+            description: `${result.migrated} leads have been migrated to the database with automated WhatsApp sequences enabled.`,
           });
         }
         setMigrationComplete(true);
@@ -39,7 +39,7 @@ const Index = () => {
       await addLead(leadData);
       toast({
         title: "Lead Captured Successfully",
-        description: "Welcome email has been automatically queued for delivery.",
+        description: "Welcome WhatsApp message has been automatically queued for delivery.",
       });
     } catch (error) {
       toast({

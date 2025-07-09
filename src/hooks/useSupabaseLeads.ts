@@ -153,7 +153,7 @@ export function useSupabaseLeads() {
     }
   };
 
-  // Trigger welcome email automation (SREQ-001)
+  // Trigger welcome WhatsApp message automation (SREQ-001)
   const triggerWelcomeEmail = async (lead: Lead) => {
     try {
       // Get appropriate welcome template based on segment
@@ -172,24 +172,23 @@ export function useSupabaseLeads() {
         return;
       }
 
-      // Schedule the welcome email
+      // Schedule the welcome WhatsApp message
       const personalizedContent = template.content.replace(/\{\{name\}\}/g, lead.name);
-      const personalizedSubject = template.subject.replace(/\{\{name\}\}/g, lead.name);
 
       await supabase
         .from('communication_history')
         .insert({
           lead_id: lead.id,
-          type: 'Email',
+          type: 'SMS',
           template_id: template.id,
-          subject: personalizedSubject,
+          subject: null, // WhatsApp doesn't need subjects
           content: personalizedContent,
           status: 'pending'
         });
 
-      console.log('Welcome email queued for:', lead.email);
+      console.log('Welcome WhatsApp message queued for:', lead.phone);
     } catch (err: any) {
-      console.error('Error triggering welcome email:', err);
+      console.error('Error triggering welcome WhatsApp message:', err);
     }
   };
 
