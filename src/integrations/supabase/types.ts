@@ -52,6 +52,69 @@ export type Database = {
           },
         ]
       }
+      client_import: {
+        Row: {
+          Address: string | null
+          "Agree to Liability Waiver": boolean | null
+          Birthday: string | null
+          "Client Email": string
+          "Client Name": string | null
+          created_at: string
+          "First Name": string
+          "First Seen": string | null
+          id: string
+          "Last Name": string
+          "Last Seen": string | null
+          "Marketing Email Opt-in": boolean | null
+          "Marketing Text Opt In": string | null
+          "Phone Number": string | null
+          "Pre-Arketa Milestone Count": string | null
+          Tags: string | null
+          "Transactional Text Opt In": string | null
+          updated_at: string
+        }
+        Insert: {
+          Address?: string | null
+          "Agree to Liability Waiver"?: boolean | null
+          Birthday?: string | null
+          "Client Email": string
+          "Client Name"?: string | null
+          created_at?: string
+          "First Name": string
+          "First Seen"?: string | null
+          id?: string
+          "Last Name": string
+          "Last Seen"?: string | null
+          "Marketing Email Opt-in"?: boolean | null
+          "Marketing Text Opt In"?: string | null
+          "Phone Number"?: string | null
+          "Pre-Arketa Milestone Count"?: string | null
+          Tags?: string | null
+          "Transactional Text Opt In"?: string | null
+          updated_at?: string
+        }
+        Update: {
+          Address?: string | null
+          "Agree to Liability Waiver"?: boolean | null
+          Birthday?: string | null
+          "Client Email"?: string
+          "Client Name"?: string | null
+          created_at?: string
+          "First Name"?: string
+          "First Seen"?: string | null
+          id?: string
+          "Last Name"?: string
+          "Last Seen"?: string | null
+          "Marketing Email Opt-in"?: boolean | null
+          "Marketing Text Opt In"?: string | null
+          "Phone Number"?: string | null
+          "Pre-Arketa Milestone Count"?: string | null
+          Tags?: string | null
+          "Transactional Text Opt In"?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       collaboration_history: {
         Row: {
           action_details: string | null
