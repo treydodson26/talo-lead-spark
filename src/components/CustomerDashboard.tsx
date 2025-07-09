@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { ArrowLeft, Search, User, Mail, Phone, MapPin, Calendar, Building } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -119,6 +120,10 @@ export function CustomerDashboard({ onBack }: CustomerDashboardProps) {
     });
   };
 
+  const getInitials = (firstName: string, lastName: string) => {
+    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+  };
+
   return (
     <div className="min-h-screen bg-gradient-zen p-4">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -212,7 +217,7 @@ export function CustomerDashboard({ onBack }: CustomerDashboardProps) {
           </Card>
         </div>
 
-        {/* Customer List */}
+        {/* Customer Gallery */}
         <Card className="bg-gradient-card border-0 shadow-soft">
           <CardHeader>
             <CardTitle>Customers ({filteredCustomers.length})</CardTitle>
@@ -231,92 +236,107 @@ export function CustomerDashboard({ onBack }: CustomerDashboardProps) {
                 <p>{searchTerm ? "No customers found matching your search" : "No customers in database"}</p>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {filteredCustomers.map((customer) => (
-                  <div key={customer.id} className="p-4 border border-border rounded-lg bg-background">
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                          <User className="w-5 h-5 text-primary" />
-                        </div>
-                        <div>
-                          <h3 className="font-semibold">
+                  <Card key={customer.id} className="bg-background border-border hover:shadow-md transition-shadow">
+                    <CardContent className="p-6">
+                      <div className="flex flex-col items-center text-center space-y-4">
+                        {/* Profile Picture */}
+                        <Avatar className="w-16 h-16">
+                          <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${customer.first_name} ${customer.last_name}`} />
+                          <AvatarFallback className="bg-primary/10 text-primary text-lg font-semibold">
+                            {getInitials(customer.first_name, customer.last_name)}
+                          </AvatarFallback>
+                        </Avatar>
+
+                        {/* Customer Info */}
+                        <div className="space-y-2">
+                          <h3 className="font-semibold text-lg">
                             {customer.first_name} {customer.last_name}
                           </h3>
+                          
                           {customer.company_name && (
-                            <p className="text-sm text-muted-foreground">{customer.company_name}</p>
+                            <p className="text-sm text-muted-foreground font-medium">{customer.company_name}</p>
+                          )}
+
+                          <div className="flex gap-2 justify-center">
+                            <Badge className={getCustomerTypeColor(customer.customer_type)} variant="secondary">
+                              {customer.customer_type}
+                            </Badge>
+                            <Badge className={getStatusColor(customer.customer_status)} variant="secondary">
+                              {customer.customer_status}
+                            </Badge>
+                          </div>
+                        </div>
+
+                        {/* Contact Info */}
+                        <div className="space-y-2 w-full">
+                          <div className="flex items-center gap-2 text-sm">
+                            <Mail className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                            <span className="truncate">{customer.email}</span>
+                          </div>
+                          
+                          {customer.phone && (
+                            <div className="flex items-center gap-2 text-sm">
+                              <Phone className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                              <span>{customer.phone}</span>
+                            </div>
+                          )}
+                          
+                          {(customer.city || customer.state) && (
+                            <div className="flex items-center gap-2 text-sm">
+                              <MapPin className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                              <span className="truncate">{customer.city}{customer.city && customer.state && ', '}{customer.state}</span>
+                            </div>
                           )}
                         </div>
-                      </div>
-                      <div className="flex gap-2">
-                        <Badge className={getCustomerTypeColor(customer.customer_type)}>
-                          {customer.customer_type}
-                        </Badge>
-                        <Badge className={getStatusColor(customer.customer_status)}>
-                          {customer.customer_status}
-                        </Badge>
-                      </div>
-                    </div>
-                    
-                    <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3 text-sm">
-                      <div className="flex items-center gap-2">
-                        <Mail className="w-4 h-4 text-muted-foreground" />
-                        <span className="truncate">{customer.email}</span>
-                        {customer.marketing_consent && (
-                          <Badge variant="outline" className="text-xs">✓ Marketing</Badge>
+
+                        {/* Additional Info */}
+                        <div className="space-y-1 w-full text-sm text-muted-foreground">
+                          <div className="flex items-center justify-between">
+                            <span>Customer since:</span>
+                            <span>{formatDate(customer.customer_since)}</span>
+                          </div>
+                          
+                          {customer.total_spent > 0 && (
+                            <div className="flex items-center justify-between">
+                              <span>Total spent:</span>
+                              <span className="font-semibold text-foreground">{formatCurrency(customer.total_spent)}</span>
+                            </div>
+                          )}
+                          
+                          {customer.marketing_consent && (
+                            <div className="flex items-center justify-center pt-2">
+                              <Badge variant="outline" className="text-xs">✓ Marketing Opt-in</Badge>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Tags */}
+                        {customer.tags && customer.tags.length > 0 && (
+                          <div className="flex gap-1 flex-wrap justify-center">
+                            {customer.tags.slice(0, 3).map((tag, index) => (
+                              <Badge key={index} variant="outline" className="text-xs">
+                                {tag}
+                              </Badge>
+                            ))}
+                            {customer.tags.length > 3 && (
+                              <Badge variant="outline" className="text-xs">
+                                +{customer.tags.length - 3}
+                              </Badge>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Notes */}
+                        {customer.notes && (
+                          <div className="w-full pt-2 border-t border-border">
+                            <p className="text-xs text-muted-foreground line-clamp-2">{customer.notes}</p>
+                          </div>
                         )}
                       </div>
-                      
-                      {customer.phone && (
-                        <div className="flex items-center gap-2">
-                          <Phone className="w-4 h-4 text-muted-foreground" />
-                          <span>{customer.phone}</span>
-                        </div>
-                      )}
-                      
-                      {(customer.city || customer.state) && (
-                        <div className="flex items-center gap-2">
-                          <MapPin className="w-4 h-4 text-muted-foreground" />
-                          <span>{customer.city}{customer.city && customer.state && ', '}{customer.state}</span>
-                        </div>
-                      )}
-                      
-                      <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-muted-foreground" />
-                        <span>Since {formatDate(customer.customer_since)}</span>
-                      </div>
-                      
-                      {customer.total_spent > 0 && (
-                        <div className="flex items-center gap-2">
-                          <span className="text-muted-foreground">Total:</span>
-                          <span className="font-semibold">{formatCurrency(customer.total_spent)}</span>
-                        </div>
-                      )}
-                      
-                      {customer.last_purchase_date && (
-                        <div className="flex items-center gap-2">
-                          <span className="text-muted-foreground">Last purchase:</span>
-                          <span>{formatDate(customer.last_purchase_date)}</span>
-                        </div>
-                      )}
-                    </div>
-                    
-                    {customer.notes && (
-                      <div className="mt-3 pt-3 border-t border-border">
-                        <p className="text-sm text-muted-foreground">{customer.notes}</p>
-                      </div>
-                    )}
-                    
-                    {customer.tags && customer.tags.length > 0 && (
-                      <div className="mt-3 flex gap-1 flex-wrap">
-                        {customer.tags.map((tag, index) => (
-                          <Badge key={index} variant="outline" className="text-xs">
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                    </CardContent>
+                  </Card>
                 ))}
               </div>
             )}
