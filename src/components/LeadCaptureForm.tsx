@@ -110,8 +110,8 @@ export function LeadCaptureForm({ onLeadSubmitted }: LeadCaptureFormProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-soft flex items-center justify-center p-4">
-      <Card className="w-full max-w-md bg-gradient-card shadow-medium border-0">
+    <div className="min-h-screen bg-gradient-soft flex items-center justify-center p-2 sm:p-4">
+      <Card className="w-full max-w-md bg-gradient-card shadow-medium border-0 mx-2">{/* Added mx-2 for mobile margins */}
         <CardHeader className="text-center pb-6">
           <div className="w-12 h-12 bg-gradient-primary rounded-full mx-auto mb-4 flex items-center justify-center">
             <Heart className="w-6 h-6 text-primary-foreground" />
