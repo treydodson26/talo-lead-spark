@@ -90,6 +90,103 @@ export type Database = {
           },
         ]
       }
+      communication_history: {
+        Row: {
+          content: string
+          created_at: string
+          error_message: string | null
+          id: string
+          lead_id: string
+          sent_at: string | null
+          sequence_id: string | null
+          status: Database["public"]["Enums"]["communication_status"]
+          subject: string | null
+          template_id: string | null
+          type: Database["public"]["Enums"]["communication_type"]
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          lead_id: string
+          sent_at?: string | null
+          sequence_id?: string | null
+          status?: Database["public"]["Enums"]["communication_status"]
+          subject?: string | null
+          template_id?: string | null
+          type: Database["public"]["Enums"]["communication_type"]
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          lead_id?: string
+          sent_at?: string | null
+          sequence_id?: string | null
+          status?: Database["public"]["Enums"]["communication_status"]
+          subject?: string | null
+          template_id?: string | null
+          type?: Database["public"]["Enums"]["communication_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "communication_history_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "communication_history_sequence_id_fkey"
+            columns: ["sequence_id"]
+            isOneToOne: false
+            referencedRelation: "communication_sequences"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "communication_history_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "email_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      communication_sequences: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          segment: Database["public"]["Enums"]["customer_segment"] | null
+          trigger_type: Database["public"]["Enums"]["trigger_type"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          segment?: Database["public"]["Enums"]["customer_segment"] | null
+          trigger_type: Database["public"]["Enums"]["trigger_type"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          segment?: Database["public"]["Enums"]["customer_segment"] | null
+          trigger_type?: Database["public"]["Enums"]["trigger_type"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       companies: {
         Row: {
           cik: string
@@ -297,6 +394,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      email_templates: {
+        Row: {
+          content: string
+          created_at: string
+          delay_hours: number | null
+          id: string
+          is_active: boolean
+          name: string
+          segment: Database["public"]["Enums"]["customer_segment"] | null
+          subject: string
+          type: Database["public"]["Enums"]["email_template_type"]
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          delay_hours?: number | null
+          id?: string
+          is_active?: boolean
+          name: string
+          segment?: Database["public"]["Enums"]["customer_segment"] | null
+          subject: string
+          type: Database["public"]["Enums"]["email_template_type"]
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          delay_hours?: number | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          segment?: Database["public"]["Enums"]["customer_segment"] | null
+          subject?: string
+          type?: Database["public"]["Enums"]["email_template_type"]
+          updated_at?: string
+        }
+        Relationships: []
       }
       employees: {
         Row: {
@@ -679,6 +815,51 @@ export type Database = {
         }
         Relationships: []
       }
+      leads: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          last_contacted_at: string | null
+          name: string
+          notes: string | null
+          phone: string
+          referral_source: string
+          segment: Database["public"]["Enums"]["customer_segment"] | null
+          status: Database["public"]["Enums"]["lead_status"]
+          submitted_at: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          last_contacted_at?: string | null
+          name: string
+          notes?: string | null
+          phone: string
+          referral_source: string
+          segment?: Database["public"]["Enums"]["customer_segment"] | null
+          status?: Database["public"]["Enums"]["lead_status"]
+          submitted_at?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          last_contacted_at?: string | null
+          name?: string
+          notes?: string | null
+          phone?: string
+          referral_source?: string
+          segment?: Database["public"]["Enums"]["customer_segment"] | null
+          status?: Database["public"]["Enums"]["lead_status"]
+          submitted_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       milestones: {
         Row: {
           completed: boolean | null
@@ -905,6 +1086,39 @@ export type Database = {
           },
         ]
       }
+      qr_codes: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          scan_count: number
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          scan_count?: number
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          scan_count?: number
+          updated_at?: string
+          url?: string
+        }
+        Relationships: []
+      }
       resources: {
         Row: {
           associated_founder_ids: string[] | null
@@ -1115,6 +1329,48 @@ export type Database = {
         }
         Relationships: []
       }
+      sequence_steps: {
+        Row: {
+          created_at: string
+          delay_hours: number
+          id: string
+          sequence_id: string
+          step_order: number
+          template_id: string
+        }
+        Insert: {
+          created_at?: string
+          delay_hours?: number
+          id?: string
+          sequence_id: string
+          step_order: number
+          template_id: string
+        }
+        Update: {
+          created_at?: string
+          delay_hours?: number
+          id?: string
+          sequence_id?: string
+          step_order?: number
+          template_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sequence_steps_sequence_id_fkey"
+            columns: ["sequence_id"]
+            isOneToOne: false
+            referencedRelation: "communication_sequences"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sequence_steps_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "email_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       smartshared_transactions: {
         Row: {
           adjustments: number | null
@@ -1304,8 +1560,14 @@ export type Database = {
     }
     Enums: {
       communication_log_status: "Sent" | "Failed" | "Pending"
+      communication_status: "sent" | "failed" | "pending"
       communication_type: "Email" | "SMS" | "InAppNotification"
       content_type: "document" | "email" | "sheet" | "slide"
+      customer_segment:
+        | "prenatal"
+        | "seniors"
+        | "young-professionals"
+        | "general"
       document_category:
         | "Enrollment"
         | "Compliance"
@@ -1322,6 +1584,11 @@ export type Database = {
         | "starred"
         | "archive"
         | "custom"
+      email_template_type:
+        | "welcome"
+        | "follow-up"
+        | "re-engagement"
+        | "post-class"
       financial_transaction_type:
         | "TuitionCharge"
         | "FeeCharge"
@@ -1329,12 +1596,18 @@ export type Database = {
         | "FinAidDisbursement"
         | "Refund"
         | "Adjustment"
+      lead_status: "new" | "contacted" | "in-progress" | "converted" | "lost"
       practical_log_status: "Pending Verification" | "Approved" | "Denied"
       survey_assignment_status:
         | "Assigned"
         | "In Progress"
         | "Completed"
         | "Overdue"
+      trigger_type:
+        | "new-lead"
+        | "intro-purchase"
+        | "first-class"
+        | "inactive-90-days"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1463,8 +1736,15 @@ export const Constants = {
   public: {
     Enums: {
       communication_log_status: ["Sent", "Failed", "Pending"],
+      communication_status: ["sent", "failed", "pending"],
       communication_type: ["Email", "SMS", "InAppNotification"],
       content_type: ["document", "email", "sheet", "slide"],
+      customer_segment: [
+        "prenatal",
+        "seniors",
+        "young-professionals",
+        "general",
+      ],
       document_category: [
         "Enrollment",
         "Compliance",
@@ -1483,6 +1763,12 @@ export const Constants = {
         "archive",
         "custom",
       ],
+      email_template_type: [
+        "welcome",
+        "follow-up",
+        "re-engagement",
+        "post-class",
+      ],
       financial_transaction_type: [
         "TuitionCharge",
         "FeeCharge",
@@ -1491,12 +1777,19 @@ export const Constants = {
         "Refund",
         "Adjustment",
       ],
+      lead_status: ["new", "contacted", "in-progress", "converted", "lost"],
       practical_log_status: ["Pending Verification", "Approved", "Denied"],
       survey_assignment_status: [
         "Assigned",
         "In Progress",
         "Completed",
         "Overdue",
+      ],
+      trigger_type: [
+        "new-lead",
+        "intro-purchase",
+        "first-class",
+        "inactive-90-days",
       ],
     },
   },

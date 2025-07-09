@@ -1,19 +1,53 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { LeadCaptureForm } from "@/components/LeadCaptureForm";
 import { LeadDashboard } from "@/components/LeadDashboard";
 import { QRCodeManagement } from "@/components/QRCodeManagement";
 import { CommunicationCenter } from "@/components/CommunicationCenter";
 import { Button } from "@/components/ui/button";
-import { BarChart3, QrCode, MessageSquare } from "lucide-react";
-import { useLeadStorage } from "@/hooks/useLeadStorage";
+import { BarChart3, QrCode, MessageSquare, Database } from "lucide-react";
+import { useSupabaseLeads } from "@/hooks/useSupabaseLeads";
+import { useToast } from "@/hooks/use-toast";
 import { Lead, LeadStatus } from "@/types/lead";
 
 const Index = () => {
-  const { leads, addLead, updateLeadStatus } = useLeadStorage();
+  const { leads, addLead, updateLeadStatus, migrateLocalStorageData, loading } = useSupabaseLeads();
+  const { toast } = useToast();
   const [currentView, setCurrentView] = useState<"form" | "dashboard" | "qr" | "communication">("form");
+  const [migrationComplete, setMigrationComplete] = useState(false);
 
-  const handleLeadSubmitted = (leadData: Omit<Lead, 'id' | 'status'>) => {
-    addLead(leadData);
+  // Check for localStorage data and migrate on component mount
+  useEffect(() => {
+    const checkAndMigrate = async () => {
+      const savedLeads = localStorage.getItem('talo-yoga-leads');
+      if (savedLeads && !migrationComplete) {
+        const result = await migrateLocalStorageData();
+        if (result.migrated > 0) {
+          toast({
+            title: "Data Migrated Successfully",
+            description: `${result.migrated} leads have been migrated to the database with automated email sequences enabled.`,
+          });
+        }
+        setMigrationComplete(true);
+      }
+    };
+    
+    checkAndMigrate();
+  }, [migrateLocalStorageData, migrationComplete, toast]);
+
+  const handleLeadSubmitted = async (leadData: Omit<Lead, 'id' | 'status'>) => {
+    try {
+      await addLead(leadData);
+      toast({
+        title: "Lead Captured Successfully",
+        description: "Welcome email has been automatically queued for delivery.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to save lead. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const showDashboard = () => {
