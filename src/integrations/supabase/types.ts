@@ -1711,6 +1711,7 @@ export type Database = {
         | "follow-up"
         | "re-engagement"
         | "post-class"
+        | "intro-package"
       financial_transaction_type:
         | "TuitionCharge"
         | "FeeCharge"
@@ -1730,6 +1731,8 @@ export type Database = {
         | "intro-purchase"
         | "first-class"
         | "inactive-90-days"
+        | "intro-package-purchased"
+        | "first-class-attended"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1890,6 +1893,7 @@ export const Constants = {
         "follow-up",
         "re-engagement",
         "post-class",
+        "intro-package",
       ],
       financial_transaction_type: [
         "TuitionCharge",
@@ -1912,6 +1916,8 @@ export const Constants = {
         "intro-purchase",
         "first-class",
         "inactive-90-days",
+        "intro-package-purchased",
+        "first-class-attended",
       ],
     },
   },
