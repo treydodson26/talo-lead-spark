@@ -2,14 +2,15 @@ import { useState } from "react";
 import { LeadCaptureForm } from "@/components/LeadCaptureForm";
 import { LeadDashboard } from "@/components/LeadDashboard";
 import { QRCodeManagement } from "@/components/QRCodeManagement";
+import { CommunicationCenter } from "@/components/CommunicationCenter";
 import { Button } from "@/components/ui/button";
-import { BarChart3, QrCode } from "lucide-react";
+import { BarChart3, QrCode, MessageSquare } from "lucide-react";
 import { useLeadStorage } from "@/hooks/useLeadStorage";
 import { Lead, LeadStatus } from "@/types/lead";
 
 const Index = () => {
   const { leads, addLead, updateLeadStatus } = useLeadStorage();
-  const [currentView, setCurrentView] = useState<"form" | "dashboard" | "qr">("form");
+  const [currentView, setCurrentView] = useState<"form" | "dashboard" | "qr" | "communication">("form");
 
   const handleLeadSubmitted = (leadData: Omit<Lead, 'id' | 'status'>) => {
     addLead(leadData);
@@ -21,6 +22,10 @@ const Index = () => {
 
   const showQR = () => {
     setCurrentView("qr");
+  };
+
+  const showCommunication = () => {
+    setCurrentView("communication");
   };
 
   const showForm = () => {
@@ -35,12 +40,26 @@ const Index = () => {
     return <QRCodeManagement onBack={showForm} />;
   }
 
+  if (currentView === "communication") {
+    return <CommunicationCenter onBack={showForm} />;
+  }
+
   return (
     <div className="relative">
       <LeadCaptureForm onLeadSubmitted={handleLeadSubmitted} />
       
       {/* Floating Action Buttons */}
       <div className="fixed bottom-4 right-4 space-y-3">
+        <Button
+          variant="outline"
+          size="lg"
+          onClick={showCommunication}
+          className="gap-2 shadow-glow bg-background border-border hover:bg-accent"
+        >
+          <MessageSquare className="w-5 h-5" />
+          Communications
+        </Button>
+        
         <Button
           variant="outline"
           size="lg"

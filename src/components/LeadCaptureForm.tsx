@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { Heart, Users, CheckCircle } from "lucide-react";
 import { Lead } from "@/types/lead";
+import { CustomerSegment, CUSTOMER_SEGMENTS } from "@/types/communication";
 
 interface LeadCaptureFormProps {
   onLeadSubmitted: (lead: Lead) => void;
@@ -28,7 +29,8 @@ export function LeadCaptureForm({ onLeadSubmitted }: LeadCaptureFormProps) {
     name: "",
     email: "",
     phone: "",
-    referralSource: ""
+    referralSource: "",
+    segment: "general" as CustomerSegment
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -60,7 +62,7 @@ export function LeadCaptureForm({ onLeadSubmitted }: LeadCaptureFormProps) {
 
       // Reset form after success message
       setTimeout(() => {
-        setFormData({ name: "", email: "", phone: "", referralSource: "" });
+        setFormData({ name: "", email: "", phone: "", referralSource: "", segment: "general" });
         setIsSubmitted(false);
       }, 3000);
 
@@ -187,6 +189,30 @@ export function LeadCaptureForm({ onLeadSubmitted }: LeadCaptureFormProps) {
                   {referralSources.map((source) => (
                     <SelectItem key={source} value={source} className="focus:bg-accent">
                       {source}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="segment" className="text-foreground font-medium">
+                Which best describes you?
+              </Label>
+              <Select
+                value={formData.segment}
+                onValueChange={(value) => handleInputChange("segment", value as CustomerSegment)}
+              >
+                <SelectTrigger className="border-border bg-background/50 focus:bg-background">
+                  <SelectValue placeholder="Select your category" />
+                </SelectTrigger>
+                <SelectContent className="bg-background border-border shadow-medium">
+                  {CUSTOMER_SEGMENTS.map((segment) => (
+                    <SelectItem key={segment.value} value={segment.value} className="focus:bg-accent">
+                      <div>
+                        <div className="font-medium">{segment.label}</div>
+                        <div className="text-xs text-muted-foreground">{segment.description}</div>
+                      </div>
                     </SelectItem>
                   ))}
                 </SelectContent>

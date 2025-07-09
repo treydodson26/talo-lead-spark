@@ -1,3 +1,5 @@
+import { CustomerSegment } from './communication';
+
 export type LeadStatus = "new" | "contacted" | "in-progress" | "converted" | "lost";
 
 export interface Lead {
@@ -8,6 +10,7 @@ export interface Lead {
   referralSource: string;
   submittedAt: Date;
   status: LeadStatus;
+  segment?: CustomerSegment;
   notes?: string;
   lastContactedAt?: Date;
 }
