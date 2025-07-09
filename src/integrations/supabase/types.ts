@@ -501,6 +501,7 @@ export type Database = {
         Row: {
           address_line_1: string | null
           address_line_2: string | null
+          agree_to_liability_waiver: boolean | null
           city: string | null
           company_name: string | null
           country: string | null
@@ -515,18 +516,23 @@ export type Database = {
           department: string | null
           email: string
           first_name: string
+          first_seen: string | null
           gender: string | null
           id: string
           job_title: string | null
           last_name: string
           last_purchase_date: string | null
+          last_seen: string | null
           marketing_consent: boolean | null
+          marketing_text_opt_in: boolean | null
           notes: string | null
           phone: string | null
+          pre_arketa_milestone_count: number | null
           preferred_contact_method: string | null
           state: string | null
           tags: string[] | null
           total_spent: number | null
+          transactional_text_opt_in: boolean | null
           updated_at: string
           updated_by: string | null
           zip_code: string | null
@@ -534,6 +540,7 @@ export type Database = {
         Insert: {
           address_line_1?: string | null
           address_line_2?: string | null
+          agree_to_liability_waiver?: boolean | null
           city?: string | null
           company_name?: string | null
           country?: string | null
@@ -548,18 +555,23 @@ export type Database = {
           department?: string | null
           email: string
           first_name: string
+          first_seen?: string | null
           gender?: string | null
           id?: string
           job_title?: string | null
           last_name: string
           last_purchase_date?: string | null
+          last_seen?: string | null
           marketing_consent?: boolean | null
+          marketing_text_opt_in?: boolean | null
           notes?: string | null
           phone?: string | null
+          pre_arketa_milestone_count?: number | null
           preferred_contact_method?: string | null
           state?: string | null
           tags?: string[] | null
           total_spent?: number | null
+          transactional_text_opt_in?: boolean | null
           updated_at?: string
           updated_by?: string | null
           zip_code?: string | null
@@ -567,6 +579,7 @@ export type Database = {
         Update: {
           address_line_1?: string | null
           address_line_2?: string | null
+          agree_to_liability_waiver?: boolean | null
           city?: string | null
           company_name?: string | null
           country?: string | null
@@ -581,18 +594,23 @@ export type Database = {
           department?: string | null
           email?: string
           first_name?: string
+          first_seen?: string | null
           gender?: string | null
           id?: string
           job_title?: string | null
           last_name?: string
           last_purchase_date?: string | null
+          last_seen?: string | null
           marketing_consent?: boolean | null
+          marketing_text_opt_in?: boolean | null
           notes?: string | null
           phone?: string | null
+          pre_arketa_milestone_count?: number | null
           preferred_contact_method?: string | null
           state?: string | null
           tags?: string[] | null
           total_spent?: number | null
+          transactional_text_opt_in?: boolean | null
           updated_at?: string
           updated_by?: string | null
           zip_code?: string | null

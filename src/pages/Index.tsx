@@ -2,10 +2,11 @@ import { useState, useEffect } from "react";
 import { LeadCaptureForm } from "@/components/LeadCaptureForm";
 import { LeadDashboard } from "@/components/LeadDashboard";
 import { CustomerDashboard } from "@/components/CustomerDashboard";
+import { ClientImport } from "@/components/ClientImport";
 import { QRCodeManagement } from "@/components/QRCodeManagement";
 import { CommunicationCenter } from "@/components/CommunicationCenter";
 import { Button } from "@/components/ui/button";
-import { BarChart3, QrCode, MessageSquare, Database, Users } from "lucide-react";
+import { BarChart3, QrCode, MessageSquare, Database, Users, Upload } from "lucide-react";
 import { useSupabaseLeads } from "@/hooks/useSupabaseLeads";
 import { useToast } from "@/hooks/use-toast";
 import { Lead, LeadStatus } from "@/types/lead";
@@ -13,7 +14,7 @@ import { Lead, LeadStatus } from "@/types/lead";
 const Index = () => {
   const { leads, addLead, updateLeadStatus, migrateLocalStorageData, loading } = useSupabaseLeads();
   const { toast } = useToast();
-  const [currentView, setCurrentView] = useState<"form" | "dashboard" | "customers" | "qr" | "communication">("form");
+  const [currentView, setCurrentView] = useState<"form" | "dashboard" | "customers" | "import" | "qr" | "communication">("form");
   const [migrationComplete, setMigrationComplete] = useState(false);
 
   // Check for localStorage data and migrate on component mount
@@ -59,6 +60,10 @@ const Index = () => {
     setCurrentView("customers");
   };
 
+  const showImport = () => {
+    setCurrentView("import");
+  };
+
   const showQR = () => {
     setCurrentView("qr");
   };
@@ -79,6 +84,10 @@ const Index = () => {
     return <CustomerDashboard onBack={showForm} />;
   }
 
+  if (currentView === "import") {
+    return <ClientImport onBack={showForm} />;
+  }
+
   if (currentView === "qr") {
     return <QRCodeManagement onBack={showForm} />;
   }
@@ -93,6 +102,16 @@ const Index = () => {
       
       {/* Floating Action Buttons */}
       <div className="fixed bottom-4 right-4 space-y-3">
+        <Button
+          variant="outline"
+          size="lg"
+          onClick={showImport}
+          className="gap-2 shadow-glow bg-background border-border hover:bg-accent"
+        >
+          <Upload className="w-5 h-5" />
+          Import CSV
+        </Button>
+        
         <Button
           variant="outline"
           size="lg"
