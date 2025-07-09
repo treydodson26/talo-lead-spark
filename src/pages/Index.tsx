@@ -3,22 +3,15 @@ import { LeadCaptureForm } from "@/components/LeadCaptureForm";
 import { LeadDashboard } from "@/components/LeadDashboard";
 import { Button } from "@/components/ui/button";
 import { BarChart3 } from "lucide-react";
-
-interface Lead {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  referralSource: string;
-  submittedAt: Date;
-}
+import { useLeadStorage } from "@/hooks/useLeadStorage";
+import { Lead, LeadStatus } from "@/types/lead";
 
 const Index = () => {
-  const [leads, setLeads] = useState<Lead[]>([]);
+  const { leads, addLead, updateLeadStatus } = useLeadStorage();
   const [currentView, setCurrentView] = useState<"form" | "dashboard">("form");
 
-  const handleLeadSubmitted = (lead: Lead) => {
-    setLeads(prev => [lead, ...prev]);
+  const handleLeadSubmitted = (leadData: Omit<Lead, 'id' | 'status'>) => {
+    addLead(leadData);
   };
 
   const showDashboard = () => {
@@ -30,7 +23,7 @@ const Index = () => {
   };
 
   if (currentView === "dashboard") {
-    return <LeadDashboard leads={leads} onBack={showForm} />;
+    return <LeadDashboard leads={leads} onBack={showForm} onUpdateLeadStatus={updateLeadStatus} />;
   }
 
   return (

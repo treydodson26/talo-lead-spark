@@ -6,15 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { Heart, Users, CheckCircle } from "lucide-react";
-
-interface Lead {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  referralSource: string;
-  submittedAt: Date;
-}
+import { Lead } from "@/types/lead";
 
 interface LeadCaptureFormProps {
   onLeadSubmitted: (lead: Lead) => void;
@@ -53,7 +45,8 @@ export function LeadCaptureForm({ onLeadSubmitted }: LeadCaptureFormProps) {
       const newLead: Lead = {
         id: Date.now().toString(),
         ...formData,
-        submittedAt: new Date()
+        submittedAt: new Date(),
+        status: 'new'
       };
 
       onLeadSubmitted(newLead);

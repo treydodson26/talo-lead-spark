@@ -3,30 +3,29 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, Search, Users, Mail, Phone, Calendar, Download } from "lucide-react";
-
-interface Lead {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  referralSource: string;
-  submittedAt: Date;
-}
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ArrowLeft, Search, Users, Mail, Phone, Calendar, Download, MessageSquare, CheckCircle } from "lucide-react";
+import { Lead, LeadStatus, LEAD_STATUSES } from "@/types/lead";
 
 interface LeadDashboardProps {
   leads: Lead[];
   onBack: () => void;
+  onUpdateLeadStatus: (leadId: string, status: LeadStatus) => void;
 }
 
-export function LeadDashboard({ leads, onBack }: LeadDashboardProps) {
+export function LeadDashboard({ leads, onBack, onUpdateLeadStatus }: LeadDashboardProps) {
   const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState<LeadStatus | "all">("all");
 
-  const filteredLeads = leads.filter(lead =>
-    lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    lead.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    lead.referralSource.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredLeads = leads.filter(lead => {
+    const matchesSearch = lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      lead.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      lead.referralSource.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesStatus = statusFilter === "all" || lead.status === statusFilter;
+    
+    return matchesSearch && matchesStatus;
+  });
 
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat('en-US', {
@@ -151,9 +150,9 @@ export function LeadDashboard({ leads, onBack }: LeadDashboardProps) {
           </Card>
         </div>
 
-        {/* Search */}
-        <div className="mb-6">
-          <div className="relative max-w-md">
+        {/* Search and Filters */}
+        <div className="mb-6 flex flex-col sm:flex-row gap-4">
+          <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <Input
               placeholder="Search leads..."
@@ -162,6 +161,19 @@ export function LeadDashboard({ leads, onBack }: LeadDashboardProps) {
               className="pl-10 bg-background border-border"
             />
           </div>
+          <Select value={statusFilter} onValueChange={(value: LeadStatus | "all") => setStatusFilter(value)}>
+            <SelectTrigger className="w-48 bg-background border-border">
+              <SelectValue placeholder="Filter by status" />
+            </SelectTrigger>
+            <SelectContent className="bg-background border-border shadow-medium">
+              <SelectItem value="all">All Status</SelectItem>
+              {LEAD_STATUSES.map((status) => (
+                <SelectItem key={status.value} value={status.value}>
+                  {status.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Leads List */}
@@ -187,17 +199,22 @@ export function LeadDashboard({ leads, onBack }: LeadDashboardProps) {
                 <CardContent className="p-6">
                   <div className="flex flex-col md:flex-row md:items-center gap-4">
                     <div className="flex-1">
-                      <div className="flex items-start justify-between mb-3">
-                        <div>
-                          <h3 className="text-lg font-semibold text-foreground">{lead.name}</h3>
-                          <p className="text-sm text-muted-foreground">
-                            Submitted on {formatDate(lead.submittedAt)}
-                          </p>
-                        </div>
-                        <Badge className={getSourceColor(lead.referralSource)}>
-                          {lead.referralSource}
-                        </Badge>
-                      </div>
+                       <div className="flex items-start justify-between mb-3">
+                         <div>
+                           <h3 className="text-lg font-semibold text-foreground">{lead.name}</h3>
+                           <p className="text-sm text-muted-foreground">
+                             Submitted on {formatDate(lead.submittedAt)}
+                           </p>
+                         </div>
+                         <div className="flex gap-2">
+                           <Badge className={LEAD_STATUSES.find(s => s.value === lead.status)?.color || "bg-gray-100 text-gray-800"}>
+                             {LEAD_STATUSES.find(s => s.value === lead.status)?.label || "Unknown"}
+                           </Badge>
+                           <Badge className={getSourceColor(lead.referralSource)}>
+                             {lead.referralSource}
+                           </Badge>
+                         </div>
+                       </div>
                       
                       <div className="space-y-2">
                         <div className="flex items-center gap-2 text-sm">
@@ -215,20 +232,39 @@ export function LeadDashboard({ leads, onBack }: LeadDashboardProps) {
                       </div>
                     </div>
                     
-                    <div className="flex gap-2">
-                      <Button variant="soft" size="sm" asChild>
-                        <a href={`mailto:${lead.email}`}>
-                          <Mail className="w-4 h-4" />
-                          Email
-                        </a>
-                      </Button>
-                      <Button variant="outline" size="sm" asChild>
-                        <a href={`tel:${lead.phone}`}>
-                          <Phone className="w-4 h-4" />
-                          Call
-                        </a>
-                      </Button>
-                    </div>
+                     <div className="flex flex-col gap-2">
+                       <div className="flex gap-2">
+                         <Button variant="soft" size="sm" asChild>
+                           <a href={`mailto:${lead.email}`}>
+                             <Mail className="w-4 h-4" />
+                             Email
+                           </a>
+                         </Button>
+                         <Button variant="outline" size="sm" asChild>
+                           <a href={`tel:${lead.phone}`}>
+                             <Phone className="w-4 h-4" />
+                             Call
+                           </a>
+                         </Button>
+                       </div>
+                       
+                       {/* Status Quick Actions */}
+                       <div className="flex gap-1 flex-wrap">
+                         {LEAD_STATUSES.filter(status => status.value !== lead.status).map((status) => (
+                           <Button
+                             key={status.value}
+                             variant="outline"
+                             size="sm"
+                             onClick={() => onUpdateLeadStatus(lead.id, status.value)}
+                             className="text-xs h-7 px-2"
+                           >
+                             {status.value === 'contacted' && <MessageSquare className="w-3 h-3 mr-1" />}
+                             {status.value === 'converted' && <CheckCircle className="w-3 h-3 mr-1" />}
+                             {status.label}
+                           </Button>
+                         ))}
+                       </div>
+                     </div>
                   </div>
                 </CardContent>
               </Card>
