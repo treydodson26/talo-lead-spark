@@ -434,6 +434,108 @@ export type Database = {
         }
         Relationships: []
       }
+      emily_customers: {
+        Row: {
+          address_line_1: string | null
+          address_line_2: string | null
+          city: string | null
+          company_name: string | null
+          country: string | null
+          created_at: string
+          created_by: string | null
+          credit_limit: number | null
+          custom_fields: Json | null
+          customer_since: string | null
+          customer_status: string | null
+          customer_type: string | null
+          date_of_birth: string | null
+          department: string | null
+          email: string
+          first_name: string
+          gender: string | null
+          id: string
+          job_title: string | null
+          last_name: string
+          last_purchase_date: string | null
+          marketing_consent: boolean | null
+          notes: string | null
+          phone: string | null
+          preferred_contact_method: string | null
+          state: string | null
+          tags: string[] | null
+          total_spent: number | null
+          updated_at: string
+          updated_by: string | null
+          zip_code: string | null
+        }
+        Insert: {
+          address_line_1?: string | null
+          address_line_2?: string | null
+          city?: string | null
+          company_name?: string | null
+          country?: string | null
+          created_at?: string
+          created_by?: string | null
+          credit_limit?: number | null
+          custom_fields?: Json | null
+          customer_since?: string | null
+          customer_status?: string | null
+          customer_type?: string | null
+          date_of_birth?: string | null
+          department?: string | null
+          email: string
+          first_name: string
+          gender?: string | null
+          id?: string
+          job_title?: string | null
+          last_name: string
+          last_purchase_date?: string | null
+          marketing_consent?: boolean | null
+          notes?: string | null
+          phone?: string | null
+          preferred_contact_method?: string | null
+          state?: string | null
+          tags?: string[] | null
+          total_spent?: number | null
+          updated_at?: string
+          updated_by?: string | null
+          zip_code?: string | null
+        }
+        Update: {
+          address_line_1?: string | null
+          address_line_2?: string | null
+          city?: string | null
+          company_name?: string | null
+          country?: string | null
+          created_at?: string
+          created_by?: string | null
+          credit_limit?: number | null
+          custom_fields?: Json | null
+          customer_since?: string | null
+          customer_status?: string | null
+          customer_type?: string | null
+          date_of_birth?: string | null
+          department?: string | null
+          email?: string
+          first_name?: string
+          gender?: string | null
+          id?: string
+          job_title?: string | null
+          last_name?: string
+          last_purchase_date?: string | null
+          marketing_consent?: boolean | null
+          notes?: string | null
+          phone?: string | null
+          preferred_contact_method?: string | null
+          state?: string | null
+          tags?: string[] | null
+          total_spent?: number | null
+          updated_at?: string
+          updated_by?: string | null
+          zip_code?: string | null
+        }
+        Relationships: []
+      }
       employees: {
         Row: {
           created_at: string | null
