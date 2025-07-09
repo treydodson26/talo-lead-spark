@@ -20,28 +20,28 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    // Get pending emails that are ready to be sent
-    const { data: pendingEmails, error: fetchError } = await supabaseClient
+    // Get pending WhatsApp messages that are ready to be sent
+    const { data: pendingMessages, error: fetchError } = await supabaseClient
       .from('communication_history')
       .select(`
         *,
-        leads (name, email)
+        leads (name, phone)
       `)
       .eq('status', 'pending')
-      .eq('type', 'Email')
+      .eq('type', 'SMS')
       .limit(10); // Process in batches
 
     if (fetchError) {
-      throw new Error(`Failed to fetch pending emails: ${fetchError.message}`);
+      throw new Error(`Failed to fetch pending messages: ${fetchError.message}`);
     }
 
-    console.log(`Found ${pendingEmails?.length || 0} pending emails`);
+    console.log(`Found ${pendingMessages?.length || 0} pending WhatsApp messages`);
 
-    if (!pendingEmails || pendingEmails.length === 0) {
+    if (!pendingMessages || pendingMessages.length === 0) {
       return new Response(
         JSON.stringify({ 
           success: true, 
-          message: 'No pending emails to process',
+          message: 'No pending WhatsApp messages to process',
           processed: 0
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -51,18 +51,17 @@ serve(async (req) => {
     let processed = 0;
     let failed = 0;
 
-    // Process each email
-    for (const email of pendingEmails) {
+    // Process each WhatsApp message
+    for (const message of pendingMessages) {
       try {
-        // Call the send-email function
-        const sendResponse = await supabaseClient.functions.invoke('send-email', {
+        // Call the send-whatsapp function
+        const sendResponse = await supabaseClient.functions.invoke('send-whatsapp', {
           body: {
-            leadId: email.lead_id,
-            templateId: email.template_id,
-            subject: email.subject,
-            content: email.content,
-            to: email.leads.email,
-            name: email.leads.name,
+            leadId: message.lead_id,
+            templateId: message.template_id,
+            content: message.content,
+            to: message.leads.phone,
+            name: message.leads.name,
           },
         });
 
@@ -71,32 +70,32 @@ serve(async (req) => {
         }
 
         processed++;
-        console.log(`Successfully sent email to ${email.leads.email}`);
+        console.log(`Successfully sent WhatsApp message to ${message.leads.phone}`);
 
-      } catch (emailError: any) {
-        console.error(`Failed to send email to ${email.leads.email}:`, emailError);
+      } catch (messageError: any) {
+        console.error(`Failed to send WhatsApp message to ${message.leads.phone}:`, messageError);
         
         // Mark as failed
         await supabaseClient
           .from('communication_history')
           .update({
             status: 'failed',
-            error_message: emailError.message,
+            error_message: messageError.message,
           })
-          .eq('id', email.id);
+          .eq('id', message.id);
         
         failed++;
       }
     }
 
-    console.log(`Email processing complete. Processed: ${processed}, Failed: ${failed}`);
+    console.log(`WhatsApp processing complete. Processed: ${processed}, Failed: ${failed}`);
 
     return new Response(
       JSON.stringify({ 
         success: true,
         processed,
         failed,
-        message: `Processed ${processed} emails, ${failed} failed`
+        message: `Processed ${processed} WhatsApp messages, ${failed} failed`
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
